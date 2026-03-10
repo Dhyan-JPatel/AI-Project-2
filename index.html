@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apple Product Idea Generator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <div class="logo"> Product Idea Generator</div>
+        <p class="subtitle">Randomly generate innovative product ideas for Apple designers</p>
+    </header>
+
+    <main>
+        <section class="options-panel">
+            <div class="option-group">
+                <label for="product-type">Product Type</label>
+                <select id="product-type">
+                    <option value="iphone">iPhone</option>
+                    <option value="ipad">iPad</option>
+                    <option value="mac">Mac</option>
+                    <option value="apple-watch">Apple Watch</option>
+                    <option value="airpods">AirPods</option>
+                    <option value="vision-pro">Vision Pro</option>
+                    <option value="homepod">HomePod</option>
+                    <option value="apple-tv">Apple TV</option>
+                </select>
+            </div>
+
+            <div class="option-group">
+                <label for="target-audience">Target Audience</label>
+                <select id="target-audience">
+                    <option value="students">Students</option>
+                    <option value="professionals">Professionals</option>
+                    <option value="seniors">Seniors</option>
+                    <option value="kids">Kids</option>
+                    <option value="athletes">Athletes</option>
+                    <option value="creatives">Creatives</option>
+                    <option value="gamers">Gamers</option>
+                    <option value="travelers">Travelers</option>
+                </select>
+            </div>
+
+            <div class="option-group">
+                <label for="design-style">Design Style</label>
+                <select id="design-style">
+                    <option value="minimalist">Minimalist</option>
+                    <option value="bold">Bold &amp; Vibrant</option>
+                    <option value="retro">Retro</option>
+                    <option value="futuristic">Futuristic</option>
+                    <option value="eco">Eco-Friendly</option>
+                </select>
+            </div>
+
+            <div class="option-group">
+                <label for="price-range">Price Range</label>
+                <select id="price-range">
+                    <option value="budget">Budget</option>
+                    <option value="mid">Mid-Range</option>
+                    <option value="premium">Premium</option>
+                    <option value="luxury">Luxury</option>
+                </select>
+            </div>
+
+            <button id="generate-btn">Generate Idea</button>
+        </section>
+
+        <section id="result-card" class="result-card hidden">
+            <h2 id="result-title"></h2>
+            <p id="result-description"></p>
+            <div class="result-details">
+                <span class="tag" id="result-product-tag"></span>
+                <span class="tag" id="result-audience-tag"></span>
+                <span class="tag" id="result-style-tag"></span>
+                <span class="tag" id="result-price-tag"></span>
+            </div>
+            <div class="feature-list">
+                <h3>Key Features</h3>
+                <ul id="result-features"></ul>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>Apple Product Idea Generator &mdash; A concept tool for designers</p>
+    </footer>
+
+    <script src="ideas.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
