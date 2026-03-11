@@ -1,9 +1,9 @@
 /**
  * App logic for the Product Idea Generator.
- * Selects a random idea based on the chosen product type and displays
- * it in the result card.  Clicking "Generate Idea" multiple times for
- * the same combination of selections will cycle through all available
- * suggestions (15 or more per product type).
+ * Each unique combination of all four selections (product type, audience,
+ * design style, price range) maintains its own independently shuffled
+ * sequence of ideas.  Clicking "Generate Idea" cycles through all 15+
+ * suggestions before repeating, guaranteeing a different idea each click.
  */
 (function () {
     var generateBtn = document.getElementById("generate-btn");
@@ -16,15 +16,25 @@
     var resultPriceTag = document.getElementById("result-price-tag");
     var resultFeatures = document.getElementById("result-features");
 
-    // Track the last shown index per product type so consecutive clicks
-    // always produce a different suggestion.
-    var lastIndexByType = {};
+    // Each entry is keyed by the full 4-value combination and stores a
+    // shuffled sequence of idea indices plus the current position in it.
+    var cycleByKey = {};
+
+    /** Shuffle an array in place using the Fisher-Yates algorithm. */
+    function shuffle(array) {
+        for (var i = array.length - 1; i > 0; i--) {
+            var j = Math.floor(Math.random() * (i + 1));
+            var tmp = array[i];
+            array[i] = array[j];
+            array[j] = tmp;
+        }
+        return array;
+    }
 
     /**
      * Generate and display a product idea based on all four selections.
-     * Each call randomly picks from the full pool of ideas for the
-     * selected product type, ensuring 15+ suggestions are accessible
-     * for every unique combination of selections.
+     * Each unique combination cycles through its own shuffled sequence of
+     * all available ideas so a different suggestion appears on every click.
      */
     function generateIdea() {
         var productType = document.getElementById("product-type").value;
@@ -37,17 +47,28 @@
             return;
         }
 
-        // Pick a random index, avoiding the same idea shown consecutively.
-        var index;
-        if (ideasForType.length === 1) {
-            index = 0;
-        } else {
-            var lastIndex = (lastIndexByType[productType] !== undefined) ? lastIndexByType[productType] : -1;
-            do {
-                index = Math.floor(Math.random() * ideasForType.length);
-            } while (index === lastIndex);
+        // Build a compound key for the full combination of all four values.
+        var key = productType + "|" + audience + "|" + style + "|" + price;
+
+        if (!cycleByKey[key]) {
+            // First time for this combination: create a shuffled index sequence.
+            var sequence = [];
+            for (var i = 0; i < ideasForType.length; i++) {
+                sequence.push(i);
+            }
+            cycleByKey[key] = { sequence: shuffle(sequence), position: 0 };
         }
-        lastIndexByType[productType] = index;
+
+        var cycle = cycleByKey[key];
+
+        // Once all ideas have been shown, reshuffle and start the cycle over.
+        if (cycle.position >= cycle.sequence.length) {
+            shuffle(cycle.sequence);
+            cycle.position = 0;
+        }
+
+        var index = cycle.sequence[cycle.position];
+        cycle.position++;
 
         var idea = ideasForType[index];
 
