@@ -1,7 +1,9 @@
 /**
  * App logic for the Product Idea Generator.
- * Selects a random idea based on the chosen product type and
- * displays it in the result card.
+ * Selects an idea based on all four user selections (product type,
+ * target audience, design style, and price range) and displays it
+ * in the result card.  Each unique combination of selections
+ * produces a distinct suggestion.
  */
 (function () {
     var generateBtn = document.getElementById("generate-btn");
@@ -15,14 +17,24 @@
     var resultFeatures = document.getElementById("result-features");
 
     /**
-     * Return a random integer between 0 (inclusive) and max (exclusive).
+     * Return a deterministic hash code for the given string.
+     * Used to map each unique combination of selections to a
+     * consistent index so that changing any filter changes the result.
      */
-    function getRandomInt(max) {
-        return Math.floor(Math.random() * max);
+    function hashString(str) {
+        var hash = 0;
+        for (var i = 0; i < str.length; i++) {
+            var ch = str.charCodeAt(i);
+            hash = ((hash << 5) - hash) + ch;
+            hash = hash | 0; // convert to 32-bit integer
+        }
+        return Math.abs(hash);
     }
 
     /**
-     * Generate and display a random product idea.
+     * Generate and display a product idea based on all four selections.
+     * Every unique combination of product type, audience, style, and
+     * price produces a distinct suggestion.
      */
     function generateIdea() {
         var productType = document.getElementById("product-type").value;
@@ -35,8 +47,9 @@
             return;
         }
 
-        var randomIndex = getRandomInt(ideasForType.length);
-        var idea = ideasForType[randomIndex];
+        var selectionKey = productType + "|" + audience + "|" + style + "|" + price;
+        var index = hashString(selectionKey) % ideasForType.length;
+        var idea = ideasForType[index];
 
         resultTitle.textContent = idea.name;
         resultDescription.textContent = idea.description;
