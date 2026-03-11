@@ -1,9 +1,9 @@
 /**
  * App logic for the Product Idea Generator.
- * Selects an idea based on all four user selections (product type,
- * target audience, design style, and price range) and displays it
- * in the result card.  Each unique combination of selections
- * produces a distinct suggestion.
+ * Selects a random idea based on the chosen product type and displays
+ * it in the result card.  Clicking "Generate Idea" multiple times for
+ * the same combination of selections will cycle through all available
+ * suggestions (15 or more per product type).
  */
 (function () {
     var generateBtn = document.getElementById("generate-btn");
@@ -16,25 +16,15 @@
     var resultPriceTag = document.getElementById("result-price-tag");
     var resultFeatures = document.getElementById("result-features");
 
-    /**
-     * Return a deterministic hash code for the given string.
-     * Used to map each unique combination of selections to a
-     * consistent index so that changing any filter changes the result.
-     */
-    function hashString(str) {
-        var hash = 0;
-        for (var i = 0; i < str.length; i++) {
-            var ch = str.charCodeAt(i);
-            hash = ((hash << 5) - hash) + ch;
-            hash = hash | 0; // convert to 32-bit integer
-        }
-        return Math.abs(hash);
-    }
+    // Track the last shown index per product type so consecutive clicks
+    // always produce a different suggestion.
+    var lastIndexByType = {};
 
     /**
      * Generate and display a product idea based on all four selections.
-     * Every unique combination of product type, audience, style, and
-     * price produces a distinct suggestion.
+     * Each call randomly picks from the full pool of ideas for the
+     * selected product type, ensuring 15+ suggestions are accessible
+     * for every unique combination of selections.
      */
     function generateIdea() {
         var productType = document.getElementById("product-type").value;
@@ -47,8 +37,18 @@
             return;
         }
 
-        var selectionKey = productType + "|" + audience + "|" + style + "|" + price;
-        var index = hashString(selectionKey) % ideasForType.length;
+        // Pick a random index, avoiding the same idea shown consecutively.
+        var index;
+        if (ideasForType.length === 1) {
+            index = 0;
+        } else {
+            var lastIndex = (lastIndexByType[productType] !== undefined) ? lastIndexByType[productType] : -1;
+            do {
+                index = Math.floor(Math.random() * ideasForType.length);
+            } while (index === lastIndex);
+        }
+        lastIndexByType[productType] = index;
+
         var idea = ideasForType[index];
 
         resultTitle.textContent = idea.name;
